@@ -1,3 +1,5 @@
+IMPORTANT: Done migrating project from NCSU Github Repo. That's why it's relatively new
+
 # shotstop
 Repository for my website ShotStop.
 
