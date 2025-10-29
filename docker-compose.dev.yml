@@ -1,0 +1,52 @@
+name: shotstop
+services:
+  proxy:
+    image: nginx:latest
+    restart: unless-stopped
+    volumes:
+      - ./proxy/default.conf.template:/etc/nginx/templates/default.conf.template
+    ports:
+      - "80:80"
+
+  api:
+    # container_name: api
+    build: ./api
+    restart: unless-stopped
+    volumes:
+      - ./api/src:/app/src
+    env_file: 
+      - .env
+    ports:
+      - 8080:80
+
+  web:
+    # container_name: web
+    build: ./web
+    restart: unless-stopped
+    volumes:
+      - ./web/src:/app/src
+    ports:
+      - 3000:80
+  
+  auth:
+    # container_name: auth
+    build: ./auth
+    restart: unless-stopped
+    volumes:
+      - ./auth/src:/app/src
+    env_file:
+      - .env
+    ports:
+      - 4000:80
+
+  database:
+    # container_name: database
+    image: postgres:18
+    restart: unless-stopped
+    ports:
+      - 5433:5432
+    env_file:
+      - .env
+    volumes:
+      - ./database/data:/var/lib/postgresql
+      - ./database/init-db:/docker-entrypoint-initdb.d
