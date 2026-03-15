@@ -3,9 +3,9 @@
 > Do not modify this file. That is exclusively the developer's responsibility.
 
 ## Project Context
-A full-stack webcomic platform serving both creators and readers.
-Supports content management, analytics, interactive reader features,
-and personalized UI experiences.
+ShotStop is a platform for emerging comic and manga creators. Creators publish
+oneshots (short-form, self-contained stories) alongside supplementary material —
+sketches, interviews, and video — to build an audience and grow within a community.
 
 ## Stack
 | Layer | Technology |
@@ -13,39 +13,61 @@ and personalized UI experiences.
 | Frontend | React |
 | Backend API | Node.js / Express |
 | Database | PostgreSQL |
-| Auth | JWT |
+| Auth | Auth.js (OAuth) · JWT (planned) |
+| Query Builder | Kysely |
+| Language | JavaScript · TypeScript (shared lib) |
+| Proxy | Nginx |
 | Containerization | Docker |
 
 ## Solution Structure
     ShotStop/
-    ├── client/                 # React frontend
-    ├── server/
-    │   ├── controllers/
-    │   ├── routes/
-    │   ├── services/
+    ├── api/                    # Core API service
+    │   └── src/
+    │       ├── controllers/
+    │       ├── routes/
+    │       └── services/
+    ├── auth/                   # Auth service
+    │   └── src/
+    │       └── routes/
+    ├── web/                    # React frontend
+    ├── lib/                    # Shared middleware and utilities
     │   ├── middleware/
-    │   └── index.js
-    ├── db/                     # Migrations, seeds, schema
-    └── docker-compose.yml
+    │   └── utils/
+    ├── proxy/                  # Nginx reverse proxy config
+    ├── database/               # Migrations, seeds, schema
+    ├── docker-compose.dev.yml
+    └── docker-compose.prod.yml
 
 ## Architecture Decisions
-- RESTful API handles all CRUD operations. Controllers handle req/res only — business logic belongs in Services.
-- JWT auth applied at the middleware level across protected routes.
+- Microservices: `api`, `auth`, and `web` run as independent services behind an Nginx reverse proxy.
+- RESTful API handles all CRUD operations. MVC pattern: controllers handle req/res only — business logic belongs in services.
+- Auth is handled by a dedicated `auth` service. Currently OAuth via Auth.js; JWT integration planned.
+- Kysely is the query builder. No full ORM — schema ownership stays with raw SQL migrations.
 - PostgreSQL is the single source of truth. No secondary persistence layer.
+- Shared code (middleware, DB utilities) lives in `lib/` and is consumed across services.
 - Docker used for consistent local development and deployment environments.
 
 ## API Shape
     Auth:      POST /api/auth/register, /api/auth/login
-    Comics:    GET/POST /api/comics, GET/PUT/DELETE /api/comics/:id
-    Chapters:  GET/POST /api/comics/:id/chapters
+    Users:     GET/PUT /api/users/:id
+               GET /api/users/:id/oneshots
+               GET /api/users/:id/posts
+    Oneshots:  GET/POST /api/oneshots
+               GET/PUT/DELETE /api/oneshots/:id
+               GET /api/oneshots/:id/pages
+               GET/POST /api/oneshots/:id/comments
+    Posts:     GET/POST /api/posts
+               GET/PUT/DELETE /api/posts/:id
+               GET/POST /api/posts/:id/comments
+    Feed:      GET /api/feed
     Bookmarks: GET/POST/DELETE /api/bookmarks
-    Comments:  GET/POST /api/comics/:id/comments
-    Analytics: GET /api/analytics/:comicId
+    Analytics: GET /api/analytics/oneshots/:id
 
 ## Code Style
 - Async/await throughout — no callbacks
+- Kysely for query building — no raw string queries
 - Parameterized queries only — no string interpolation in SQL
-- No ORMs — raw SQL intentionally
+- No full ORM — schema ownership stays at the migration level
 - Controllers handle req/res only. No business logic above the service layer.
 
 ## How to Work With Me
@@ -68,5 +90,8 @@ iterating. Flag it early.
 
 ## GitHub Workflow
 - Branch flow: master → dev → feature branches
+- Feature branch naming: `[category]/[ticket-id]-[short-description]`
+  Omit ticket ID if none is present.
+  Examples: `feature/login-system`, `bugfix/header-styling`, `ai/claude-filesystem-touchup`
 - PR format: Summary / Changes / Verification
-- Commit format: <type>(<scope>): <summary>
+- Commit format: `<type>(<scope>): <summary>`
