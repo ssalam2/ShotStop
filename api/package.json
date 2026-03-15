@@ -1,5 +1,5 @@
 {
-  "name": "shotstop",
+  "name": "shotstop-api",
   "version": "1.0.0",
   "description": "webapp for manga/comic authors and consumers",
   "main": "index.js",

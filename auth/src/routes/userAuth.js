@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { tokenSigning, tokenValidation } = require('lib/middleware/tokenAuth');
+const { tokenSigning, tokenValidation } = require('shared-lib').tokenAuth;
 const jwt = require('jsonwebtoken');
 
 var refreshToken = null;

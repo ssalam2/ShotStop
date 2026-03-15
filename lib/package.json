@@ -1,6 +1,7 @@
 {
-  "name": "shotstop",
+  "name": "shared-lib",
   "version": "1.0.0",
+  "main": "index.js",
   "description": "webapp for manga/comic authors and consumers",
   "scripts": {},
   "author": "sadaf alam",
@@ -12,5 +13,9 @@
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.5",
     "pg": "^8.16.3"
-  }
+  },
+  "files": [
+    "utils",
+    "middleware"
+  ]
 }

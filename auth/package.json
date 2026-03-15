@@ -1,5 +1,5 @@
 {
-  "name": "shotstop",
+  "name": "shotstop-auth",
   "version": "1.0.0",
   "description": "webapp for manga/comic authors and consumers",
   "main": "index.js",
@@ -16,8 +16,8 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.5",
-    "lib": "file:../lib",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "shared-lib": "file:../lib"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
